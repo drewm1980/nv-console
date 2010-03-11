@@ -58,15 +58,15 @@ class NV_Pile(urwid.Pile):
     def __init__(self, widget_list, focus_item=None):
         super(NV_Pile, self).__init__(widget_list, focus_item=None)
     def keypress(self, size, key):
-        if key in ['Ctrl-Q']:
+        if key in ['ctrl q']:
             raise urwid.ExitMainLoop()
         if self.get_focus() == 0:
             if key.lower() in ['tab']:
                 self.set_focus(2)
             else:
                 return super(NV_Pile, self).keypress(size, key)
-        elif self.get_focus == 2:
-            if key.lower() in ['shift-tab']:
+        elif self.get_focus() == 2:
+            if key.lower() in ['shift tab']:
                 self.set_focus(0)
             else:
                 return super(NV_Pile, self).keypress(size, key)
@@ -77,7 +77,7 @@ temp1 = urwid.AttrMap(temp1, 'search')
 
 temp2 = listWidget
 temp2 = urwid.ListBox(temp2)
-temp2 = urwid.AttrMap(temp2, 'list nofocus', 'list_focus')
+temp2 = urwid.AttrMap(temp2, 'list nofocus', 'list focus')
 
 temp3 = editWidget
 temp3 = urwid.AttrMap(temp3, 'edit')
