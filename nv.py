@@ -11,51 +11,103 @@ database = {'fruit':'apples\noranges\npears\npeaches\raspberries\strawberries',
             "A few of Drew's favorite things":'python programming language\n\
             bicycling\nstrawberries\nnotational velocity\n'}
 
-palette = [('filter', 'white', 'black', '', 'black', 'g62'),
+palette = [('search', 'white', 'black', '', 'black', 'g62'),
     ('list focus', 'black', 'dark cyan', '', 'black', '#8af'),
     ('list nofocus', 'black', 'dark gray', '', 'black', 'g78'),
-    ('body', 'black', 'white')]
+    ('edit', 'black', 'white')]
+
+verboseMode = True
+debugMode = True
 
 # An Edit box for the filter
-filterEdit = urwid.Edit("", wrap='clip', multiline=False)
-filterMap = urwid.AttrMap(filterEdit, 'filter')
+class NV_Edit1(urwid.Edit):        
+    def keypress(self, size, key):
+        # Filter out Up and down arrows and send them to the ListBox.
+        if key in ['up','down']:
+            searchList.keypress(size, key)
+        else:
+            super(NV_Edit1, self).keypress(size, key)
+if verboseMode:
+    promptString = "Enter your search term here:"
+else:
+    promptString = ""
+searchWidget = NV_Edit1(promptString, wrap='clip', multiline=False)
 
-# Temporary stand-in for what will probably be a listbox...
-def string_to_list_box(strings):
-    listEntries = [urwid.Text(s) for s in strings]
-    listEntries2 = [urwid.AttrMap(e, 'list nofocus', 'list_focus') for e in listEntries]
-    listContent = urwid.SimpleListWalker(listEntries2)
-    listListBox = urwid.ListBox(listContent)
-    return listListBox
 
-listListBox = string_to_list_box(['initial', 'values'])
-#listFiller = urwid.Filler(listListBox, valign='top')
-#listMap = urwid.AttrMap(listListBox, 'list nofocus', 'list_focus')
+# A list walker for the filtered entries...
+class NV_SimpleListWalker(urwid.SimpleListWalker):
+    def selectable(self):
+        return False
+if verboseMode:
+    promptString = "This area will contain filtered note titles \
+                   once you start typing."
+else:
+    promptString = ""
+listWidget = NV_SimpleListWalker([urwid.Text(promptString)])
 
-# An Edit box for the body of the note
-bodyEdit = urwid.Edit("", wrap='space', multiline=True)
-bodyFiller = urwid.Filler(bodyEdit, valign='top')
-bodyMap = urwid.AttrMap(bodyFiller, 'body')
+# An Edit for the body of the note...
+# No need to subclass yet, but to be futureproof...
+NV_Edit2 = urwid.Edit
+if verboseMode:
+    promptString = "This is where you view and edit notes:"
+else:
+    promptString = ""
+editWidget = NV_Edit2(promptString, wrap='space', multiline=True)
 
-def on_filter_change(filterEdit, searchString):
-    global listListBox
-    # search the titles of the dictionary keys
-    foundKeys = [k for k in database.iterkeys() if k.find(searchString)>-1]
-    listListBox.extend(string_to_list_box(foundKeys))
+# A Pile to handle global keyboard focus...
+class NV_Pile(urwid.Pile):
+    def __init__(self, widget_list, focus_item=None):
+        super(NV_Pile, self).__init__(widget_list, focus_item=None)
+    def keypress(self, size, key):
+        if key in ['Ctrl-Q']:
+            raise urwid.ExitMainLoop()
+        if self.get_focus() == 0:
+            if key in ['tab']:
+                self.set_focus(2)
+            else:
+                return super(NV_Pile, self).keypress(size, key)
+        elif self.get_focus == 2:
+            if key in ['shift-tab']:
+                self.set_focus(0)
+            else:
+                return super(NV_Pile, self).keypress(size, key)
 
-urwid.connect_signal(filterEdit, 'change', on_filter_change)
+# Add some formatting and padding widgets.
+temp1 = searchWidget
+temp1 = urwid.AttrMap(temp1, 'search')
 
-pile = urwid.Pile([('flow', filterMap), # filter computes its own height (1)
-    ('weight',1,listListBox),
-    ('weight',2,bodyMap)], focus_item=filterMap)
+temp2 = listWidget
+temp2 = urwid.ListBox(temp2)
+temp2 = urwid.AttrMap(temp2, 'list nofocus', 'list_focus')
+#temp2 = urwid.Filler(temp2)
+
+temp3 = editWidget
+temp3 = urwid.AttrMap(temp3, 'edit')
+temp3 = urwid.Filler(temp3)
+
+# Glue everything together
+pile = NV_Pile([('flow', temp1),
+    ('weight',1,temp2),
+    ('weight',2,temp3)])
 
 def do_pass():
     pass
-
-def do_quit():
-    raise urwid.ExitMainLoop()
 
 #loop = urwid.MainLoop(listbox, palette, unhandled_input=on_unhandled_input)
 loop = urwid.MainLoop(pile, palette, unhandled_input=do_pass)
 loop.screen.set_terminal_properties(colors=256)
 loop.run()
+
+
+
+
+
+
+#def on_filter_change(filterEdit, searchString):
+#    global listListBox
+#    # search the titles of the dictionary keys
+#    foundKeys = [k for k in database.iterkeys() if k.find(searchString)>-1]
+#    listListBox.extend(string_to_list_box(foundKeys))
+
+#urwid.connect_signal(filterEdit, 'change', on_filter_change)
+
