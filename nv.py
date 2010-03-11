@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# This is a urwid port of the Notational Velocity note taking program.
+# This is an urwid port of the Notational Velocity note taking program.
 # Andrew Wagner 2010
 import urwid
 
@@ -17,7 +17,6 @@ palette = [('search', 'white', 'black', '', 'black', 'g62'),
     ('edit', 'black', 'white')]
 
 verboseMode = True
-debugMode = True
 
 # An Edit box for the filter
 class NV_Edit1(urwid.Edit):        
@@ -62,12 +61,12 @@ class NV_Pile(urwid.Pile):
         if key in ['Ctrl-Q']:
             raise urwid.ExitMainLoop()
         if self.get_focus() == 0:
-            if key in ['tab']:
+            if key.lower() in ['tab']:
                 self.set_focus(2)
             else:
                 return super(NV_Pile, self).keypress(size, key)
         elif self.get_focus == 2:
-            if key in ['shift-tab']:
+            if key.lower() in ['shift-tab']:
                 self.set_focus(0)
             else:
                 return super(NV_Pile, self).keypress(size, key)
@@ -79,7 +78,6 @@ temp1 = urwid.AttrMap(temp1, 'search')
 temp2 = listWidget
 temp2 = urwid.ListBox(temp2)
 temp2 = urwid.AttrMap(temp2, 'list nofocus', 'list_focus')
-#temp2 = urwid.Filler(temp2)
 
 temp3 = editWidget
 temp3 = urwid.AttrMap(temp3, 'edit')
@@ -93,12 +91,9 @@ pile = NV_Pile([('flow', temp1),
 def do_pass():
     pass
 
-#loop = urwid.MainLoop(listbox, palette, unhandled_input=on_unhandled_input)
 loop = urwid.MainLoop(pile, palette, unhandled_input=do_pass)
 loop.screen.set_terminal_properties(colors=256)
 loop.run()
-
-
 
 
 
