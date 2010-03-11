@@ -60,12 +60,12 @@ class NV_Pile(urwid.Pile):
     def keypress(self, size, key):
         if key in ['ctrl q']:
             raise urwid.ExitMainLoop()
-        if self.get_focus() == 0:
+        if self.get_focus() == self.widget_list[0]:
             if key.lower() in ['tab']:
                 self.set_focus(2)
             else:
                 return super(NV_Pile, self).keypress(size, key)
-        elif self.get_focus() == 2:
+        elif self.get_focus() == self.widget_list[2]:
             if key.lower() in ['shift tab']:
                 self.set_focus(0)
             else:
@@ -88,7 +88,7 @@ pile = NV_Pile([('flow', temp1),
     ('weight',1,temp2),
     ('weight',2,temp3)])
 
-def do_pass():
+def do_pass(input=None):
     pass
 
 loop = urwid.MainLoop(pile, palette, unhandled_input=do_pass)
