@@ -39,11 +39,12 @@ class NV_SimpleListWalker(urwid.SimpleListWalker):
         return False
 if verboseMode:
     promptString = "This area will contain filtered note titles \
-                   once you start typing."
+once you start typing."
 else:
     promptString = ""
 listWidget = NV_SimpleListWalker([urwid.Text(promptString),
-                                  urwid.Text('This is a second initial entry')])
+                                  urwid.Text('This is a second initial entry'+
+                                             ' for debugging purposes.')])
 
 # An Edit for the body of the note...
 # No need to subclass yet, but to be futureproof...
@@ -84,7 +85,7 @@ temp2 = urwid.AttrMap(temp2, 'list nofocus', 'list focus')
 
 temp3 = editWidget
 temp3 = urwid.AttrMap(temp3, 'edit')
-temp3 = urwid.Filler(temp3)
+temp3 = urwid.Filler(temp3,valign='top')
 
 # Glue everything together
 pile = NV_Pile([('flow', temp1),
