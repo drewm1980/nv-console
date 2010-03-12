@@ -10,6 +10,9 @@ except ImportError:
                         "library!  On Debian, try something like:"+\
                         "# apt-get install urwid"
 expectedUrwidVersion = '0.9.9.1'
+assert urwid.__version__ >= '0.9.9', 'Sorry, you need a newer version of '+\
+                            'urwid. Please update.  If you''re on Debian, '+\
+                            'try the version in the testing branch.'
 if urwid.__version__!=expectedUrwidVersion:
     warn('This code was written for urwid version %s, but version %s was '+
          'found.\nGood luck!')%(expectedUrwidVersion, urwid.__version__)
