@@ -1,32 +1,32 @@
 #!/usr/bin/env python
-
 import urwid
+
+class SelectableText(urwid.Text):
+    def selectable(self): return True
+    def keypress(self, size, key):
+        return key
 
 palette = [('header', 'white', 'black'),
     ('reveal focus', 'black', 'dark cyan', 'standout'),]
 content = urwid.SimpleListWalker([
     urwid.AttrMap(w, None, 'reveal focus') for w in [
-    urwid.Text("This is a text string that is fairly long"),
+    SelectableText("First Entry"),
     urwid.Divider("-"),
-    urwid.Text("Short one"),
-    urwid.Text("Another"),
+    SelectableText("Second Entry"),
     urwid.Divider("-"),
-    urwid.Text("What could be after this?"),
-    urwid.Text("The end."),]])
+    SelectableText("Third Entry"),
+    urwid.Divider("-"),
+    SelectableText("Fourth Entry"),
+    urwid.Divider("-"),
+    SelectableText("Fifth Entry")]])
 listbox = urwid.ListBox(content)
 show_key = urwid.Text("", wrap='clip')
 head = urwid.AttrMap(show_key, 'header')
 top = urwid.Frame(listbox, head)
 
-def show_all_input(input, raw):
-    show_key.set_text("Pressed: " + " ".join([
-        unicode(i) for i in input]))
-    return input
-
 def exit_on_cr(input):
     if input == 'enter':
         raise urwid.ExitMainLoop()
 
-loop = urwid.MainLoop(top, palette,
-    input_filter=show_all_input, unhandled_input=exit_on_cr)
+loop = urwid.MainLoop(top, palette, unhandled_input=exit_on_cr)
 loop.run()
