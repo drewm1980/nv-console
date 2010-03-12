@@ -22,8 +22,8 @@ verboseMode = True
 class NV_Edit1(urwid.Edit):        
     def keypress(self, size, key):
         # Filter out Up and down arrows and send them to the ListBox.
-        if key in ['up','down']:
-            searchList.keypress(size, key)
+        if key in ['up','down','pageup','pagedown']:
+            listBox.keypress(size, key) #<----- BORK!! LISTBOX IS NOT HAPPY WITH THIS SIZE TUPLE!!!
         else:
             super(NV_Edit1, self).keypress(size, key)
 if verboseMode:
@@ -42,7 +42,8 @@ if verboseMode:
                    once you start typing."
 else:
     promptString = ""
-listWidget = NV_SimpleListWalker([urwid.Text(promptString)])
+listWidget = NV_SimpleListWalker([urwid.Text(promptString),
+                                  urwid.Text('This is a second initial entry')])
 
 # An Edit for the body of the note...
 # No need to subclass yet, but to be futureproof...
@@ -77,6 +78,7 @@ temp1 = urwid.AttrMap(temp1, 'search')
 
 temp2 = listWidget
 temp2 = urwid.ListBox(temp2)
+listBox = temp2
 temp2 = urwid.AttrMap(temp2, 'list nofocus', 'list focus')
 
 temp3 = editWidget
@@ -105,4 +107,14 @@ loop.run()
 #    listListBox.extend(string_to_list_box(foundKeys))
 
 #urwid.connect_signal(filterEdit, 'change', on_filter_change)
+
+
+            #if key=='up':
+            #    listBox._keypress_up(size)
+            #elif key=='down':
+            #    listBox._keypress_down(size)
+            #elif key=='pageup':
+            #    listBox._keypress_pageup(size)
+            #elif key=='pagedown':
+            #    listBox._keypress_pagedown(size)
 
