@@ -55,7 +55,8 @@ listStrings = [promptString,'This is a second initial entry'+
                                 ' for debugging purposes.']
 listEntries = []
 for s in listStrings:
-    listEntries.append(urwid.AttrMap(urwid.Text(s), 'list nofocus', 'list focus'))
+    listEntries.append(urwid.AttrMap(urwid.Text(s),
+                                     'list nofocus', 'list focus'))
     #listEntries.append(urwid.Text(s))
 listWidget = NV_SimpleListWalker(listEntries)
 
