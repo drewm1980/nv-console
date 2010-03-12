@@ -23,7 +23,7 @@ class NV_Edit1(urwid.Edit):
     def keypress(self, size, key):
         # Filter out Up and down arrows and send them to the ListBox.
         if key in ['up','down','pageup','pagedown']:
-            listBox.keypress(size, key) #<----- BORK!! LISTBOX IS NOT HAPPY WITH THIS SIZE TUPLE!!!
+            listBox.keypress(size, key) # <------------ BORK!!! listBox not happy with size!
         else:
             super(NV_Edit1, self).keypress(size, key)
 if verboseMode:
@@ -52,7 +52,8 @@ if verboseMode:
     promptString = "This is where you view and edit notes:"
 else:
     promptString = ""
-editWidget = NV_Edit2(promptString, wrap='space', multiline=True)
+editWidget = NV_Edit2(promptString, wrap='space', multiline=True,
+                      allow_tab=True, edit_pos=0)
 
 # A Pile to handle global keyboard focus...
 class NV_Pile(urwid.Pile):
@@ -96,25 +97,4 @@ def do_pass(input=None):
 loop = urwid.MainLoop(pile, palette, unhandled_input=do_pass)
 loop.screen.set_terminal_properties(colors=256)
 loop.run()
-
-
-
-
-#def on_filter_change(filterEdit, searchString):
-#    global listListBox
-#    # search the titles of the dictionary keys
-#    foundKeys = [k for k in database.iterkeys() if k.find(searchString)>-1]
-#    listListBox.extend(string_to_list_box(foundKeys))
-
-#urwid.connect_signal(filterEdit, 'change', on_filter_change)
-
-
-            #if key=='up':
-            #    listBox._keypress_up(size)
-            #elif key=='down':
-            #    listBox._keypress_down(size)
-            #elif key=='pageup':
-            #    listBox._keypress_pageup(size)
-            #elif key=='pagedown':
-            #    listBox._keypress_pagedown(size)
 
