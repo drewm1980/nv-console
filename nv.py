@@ -1,7 +1,19 @@
 #!/usr/bin/python
 # This is an urwid port of the Notational Velocity note taking program.
 # Andrew Wagner 2010
-import urwid
+from warnings import warn
+from time import sleep
+try:
+    import urwid
+except ImportError:
+    raise ImportError, "Oops, Notational Velociy could not find the urwid"+\
+                        "library!  On Debian, try something like:"+\
+                        "# apt-get install urwid"
+expectedUrwidVersion = '0.9.9.1'
+if urwid.__version__!=expectedUrwidVersion:
+    warn('This code was written for urwid version %s, but version %s was '+
+         'found.\nGood luck!')%(expectedUrwidVersion, urwid.__version__)
+    sleep(1)
 
 database = {'fruit':'apples\noranges\npears\npeaches\raspberries\strawberries',
             'animals':'pythons\nbears\njellyfish\ndolphins\nelephants',
@@ -20,35 +32,34 @@ verboseMode = True
 
 # An Edit box for the filter
 class NV_Edit1(urwid.Edit):        
-    def keypress(self, size, key):
-        # Filter out Up and down arrows and send them to the ListBox.
-        if key in ['up','down','pageup','pagedown']:
-            listBox.keypress(size, key) # <------------ BORK!!! listBox not happy with size!
-        else:
-            super(NV_Edit1, self).keypress(size, key)
+    pass
 if verboseMode:
     promptString = "Enter your search term here:"
 else:
     promptString = ""
 searchWidget = NV_Edit1(promptString, wrap='clip', multiline=False)
 
-
 # A list walker for the filtered entries...
 class NV_SimpleListWalker(urwid.SimpleListWalker):
     def selectable(self):
-        return False
+        return True
 if verboseMode:
     promptString = "This area will contain filtered note titles \
 once you start typing."
 else:
     promptString = ""
-listWidget = NV_SimpleListWalker([urwid.Text(promptString),
-                                  urwid.Text('This is a second initial entry'+
-                                             ' for debugging purposes.')])
+listStrings = [promptString,'This is a second initial entry'+
+                                ' for debugging purposes.']
+listEntries = []
+for s in listStrings:
+    listEntries.append(urwid.AttrMap(urwid.Text(s), 'list nofocus', 'list focus'))
+    #listEntries.append(urwid.Text(s))
+listWidget = NV_SimpleListWalker(listEntries)
 
 # An Edit for the body of the note...
 # No need to subclass yet, but to be futureproof...
-NV_Edit2 = urwid.Edit
+class NV_Edit2(urwid.Edit):        
+    pass
 if verboseMode:
     promptString = "This is where you view and edit notes:"
 else:
@@ -66,13 +77,17 @@ class NV_Pile(urwid.Pile):
         if self.get_focus() == self.widget_list[0]:
             if key.lower() in ['tab']:
                 self.set_focus(2)
+            elif key in ['up','down','pageup','pagedown']:
+                return self.widget_list[1].keypress(size, key)
             else:
-                return super(NV_Pile, self).keypress(size, key)
+                return self.widget_list[0].keypress((size[0],), key)
         elif self.get_focus() == self.widget_list[2]:
             if key.lower() in ['shift tab']:
                 self.set_focus(0)
             else:
                 return super(NV_Pile, self).keypress(size, key)
+        else:
+            raise StandardError,"Oops! Pile focus reached an unexpected widget!"
 
 # Add some formatting and padding widgets.
 temp1 = searchWidget
@@ -81,7 +96,7 @@ temp1 = urwid.AttrMap(temp1, 'search')
 temp2 = listWidget
 temp2 = urwid.ListBox(temp2)
 listBox = temp2
-temp2 = urwid.AttrMap(temp2, 'list nofocus', 'list focus')
+temp2 = urwid.AttrMap(temp2, 'list nofocus', 'list nofocus')
 
 temp3 = editWidget
 temp3 = urwid.AttrMap(temp3, 'edit')
@@ -92,10 +107,10 @@ pile = NV_Pile([('flow', temp1),
     ('weight',1,temp2),
     ('weight',2,temp3)])
 
-def do_pass(input=None):
-    pass
+def on_unhandled_input(input=None):
+    warn('Bug! Detected unhandled input:%s'%str(input))
 
-loop = urwid.MainLoop(pile, palette, unhandled_input=do_pass)
+loop = urwid.MainLoop(pile, palette, unhandled_input=on_unhandled_input)
 loop.screen.set_terminal_properties(colors=256)
 loop.run()
 
