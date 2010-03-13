@@ -33,6 +33,12 @@ palette = [('search', 'white', 'black', '', 'black', 'g62'),
 
 verboseMode = True
 
+# We will need text entries that are selectable later.
+class SelectableText(urwid.Text):
+    def selectable(self): return True
+    def keypress(self, size, key):
+        return key
+
 # An Edit box for the filter
 class NV_Edit1(urwid.Edit):        
     pass
@@ -45,7 +51,7 @@ searchWidget = NV_Edit1(promptString, wrap='clip', multiline=False)
 # A list walker for the filtered entries...
 class NV_SimpleListWalker(urwid.SimpleListWalker):
     def selectable(self):
-        return True
+        return False
 if verboseMode:
     promptString = "This area will contain filtered note titles \
 once you start typing."
@@ -55,9 +61,9 @@ listStrings = [promptString,'This is a second initial entry'+
                                 ' for debugging purposes.']
 listEntries = []
 for s in listStrings:
-    listEntries.append(urwid.AttrMap(urwid.Text(s),
-                                     'list nofocus', 'list focus'))
     #listEntries.append(urwid.Text(s))
+    listEntries.append(urwid.AttrMap(SelectableText(s),
+                                     'list nofocus', 'list focus'))
 listWidget = NV_SimpleListWalker(listEntries)
 
 # An Edit for the body of the note...
@@ -81,8 +87,13 @@ class NV_Pile(urwid.Pile):
         if self.get_focus() == self.widget_list[0]:
             if key.lower() in ['tab']:
                 self.set_focus(2)
-            elif key in ['up','down','pageup','pagedown']:
-                return self.widget_list[1].keypress(size, key)
+            elif key.lower() in ['up','down','pageup','pagedown']:
+                #listWidget.append(urwid.Text('first list entry got focus!'))
+                key = self.widget_list[1].keypress(size, key)
+                editWidget.set_edit_text(editWidget.get_edit_text()+
+                                         '\nList focused on entry '+
+                                         str(listWidget.get_focus()))
+                return key
             else:
                 return self.widget_list[0].keypress((size[0],), key)
         elif self.get_focus() == self.widget_list[2]:
@@ -100,7 +111,7 @@ temp1 = urwid.AttrMap(temp1, 'search')
 temp2 = listWidget
 temp2 = urwid.ListBox(temp2)
 listBox = temp2
-temp2 = urwid.AttrMap(temp2, 'list nofocus', 'list nofocus')
+temp2 = urwid.AttrMap(temp2, 'list nofocus', 'list focus')
 
 temp3 = editWidget
 temp3 = urwid.AttrMap(temp3, 'edit')
