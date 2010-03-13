@@ -84,7 +84,7 @@ class NV_Pile(urwid.Pile):
     def keypress(self, size, key):
         if key in ['ctrl q']:
             raise urwid.ExitMainLoop()
-        if self.get_focus() == self.widget_list[0]:
+        if self.get_focus() == self.widget_list[1]:
             if key.lower() in ['tab']:
                 self.set_focus(2)
             elif key.lower() in ['up','down','pageup','pagedown']:
@@ -98,7 +98,7 @@ class NV_Pile(urwid.Pile):
                 return self.widget_list[0].keypress((size[0],), key)
         elif self.get_focus() == self.widget_list[2]:
             if key.lower() in ['shift tab']:
-                self.set_focus(0)
+                self.set_focus(1)
             else:
                 return super(NV_Pile, self).keypress(size, key)
         else:
