@@ -80,7 +80,7 @@ editWidget = NV_Edit2(promptString, wrap='space', multiline=True,
 # A Pile to handle global keyboard focus...
 class NV_Pile(urwid.Pile):
     def __init__(self, widget_list, focus_item=None):
-        super(NV_Pile, self).__init__(widget_list, focus_item=None)
+        super(NV_Pile, self).__init__(widget_list, focus_item=1)
     def keypress(self, size, key):
         if key in ['ctrl q']:
             raise urwid.ExitMainLoop()
@@ -111,7 +111,7 @@ temp1 = urwid.AttrMap(temp1, 'search')
 temp2 = listWidget
 temp2 = urwid.ListBox(temp2)
 listBox = temp2
-temp2 = urwid.AttrMap(temp2, 'list nofocus', 'list focus')
+temp2 = urwid.AttrMap(temp2, 'list nofocus', 'list nofocus')
 
 temp3 = editWidget
 temp3 = urwid.AttrMap(temp3, 'edit')
