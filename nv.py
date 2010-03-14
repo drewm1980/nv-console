@@ -90,6 +90,21 @@ pile = NV_Pile([('flow', temp1),
     ('weight',1,temp2),
     ('weight',2,temp3)])
 
+def on_search_update(sourceWidget, searchString):
+    # The top Edit box search string has changed.
+    listStrings = db.search(searchString)
+    listEntries = []
+    for s in listStrings:
+        listEntries.append(urwid.AttrMap(SelectableText(s),
+                                             'list nofocus', 'list focus'))
+        
+    # Treat the SimpleListWalker like a list...    
+    del listWidget[:]
+    listWidget.extend(listEntries)
+
+
+urwid.connect_signal(searchWidget, 'change', on_search_update)
+
 def on_unhandled_input(input=None):
     warn('Bug! Detected unhandled input:%s'%str(input))
 
