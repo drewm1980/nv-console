@@ -28,8 +28,6 @@ palette = [('search', 'white', 'black', '', 'black', 'g62'),
     ('list nofocus', 'black', 'dark gray', '', 'black', 'g70'),
     ('edit', 'black', 'white')]
 
-verboseMode = True
-
 # We will need text entries that are selectable later.
 class SelectableText(urwid.Text):
     def selectable(self): return True
@@ -37,41 +35,18 @@ class SelectableText(urwid.Text):
         return key
 
 # An Edit box for the filter
-class NV_Edit1(urwid.Edit):        
-    pass
-if verboseMode:
-    promptString = "Enter your search term here:"
-else:
-    promptString = ""
-searchWidget = NV_Edit1(promptString, wrap='clip', multiline=False)
+searchWidget = urwid.Edit('', wrap='clip', multiline=False)
 
 # A list walker for the filtered entries...
-class NV_SimpleListWalker(urwid.SimpleListWalker):
-    def selectable(self):
-        return False
-if verboseMode:
-    promptString = "This area will contain filtered note titles \
-once you start typing."
-else:
-    promptString = ""
-listStrings = [promptString,'This is a second initial entry'+
-                                ' for debugging purposes.']
+listStrings = db.search('')
 listEntries = []
 for s in listStrings:
-    #listEntries.append(urwid.Text(s))
     listEntries.append(urwid.AttrMap(SelectableText(s),
                                      'list nofocus', 'list focus'))
-listWidget = NV_SimpleListWalker(listEntries)
+listWidget = urwid.SimpleListWalker(listEntries)
 
 # An Edit for the body of the note...
-# No need to subclass yet, but to be futureproof...
-class NV_Edit2(urwid.Edit):        
-    pass
-if verboseMode:
-    promptString = "This is where you view and edit notes:"
-else:
-    promptString = ""
-editWidget = NV_Edit2(promptString, wrap='space', multiline=True,
+editWidget = urwid.Edit('', wrap='space', multiline=True,
                       allow_tab=True, edit_pos=0)
 
 # A Pile to handle global keyboard focus...
@@ -85,11 +60,7 @@ class NV_Pile(urwid.Pile):
             if key.lower() in ['tab']:
                 self.set_focus(2)
             elif key.lower() in ['up','down','pageup','pagedown']:
-                #listWidget.append(urwid.Text('first list entry got focus!'))
                 key = self.widget_list[1].keypress(size, key)
-                editWidget.set_edit_text(editWidget.get_edit_text()+
-                                         '\nList focused on entry '+
-                                         str(listWidget.get_focus()))
                 return key
             else:
                 return self.widget_list[0].keypress((size[0],), key)
