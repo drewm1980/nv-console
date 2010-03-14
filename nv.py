@@ -27,8 +27,8 @@ database = {'fruit':'apples\noranges\npears\npeaches\raspberries\strawberries',
             bicycling\nstrawberries\nnotational velocity\n'}
 
 palette = [('search', 'white', 'black', '', 'black', 'g62'),
-    ('list focus', 'black', 'dark cyan', '', 'black', '#8af'),
-    ('list nofocus', 'black', 'dark gray', '', 'black', 'g78'),
+    ('list focus', 'black', 'light gray', '', 'black', 'g78'),
+    ('list nofocus', 'black', 'dark gray', '', 'black', 'g70'),
     ('edit', 'black', 'white')]
 
 verboseMode = True
