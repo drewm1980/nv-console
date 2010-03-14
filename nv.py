@@ -18,13 +18,10 @@ if urwid.__version__!=expectedUrwidVersion:
          'found.\nGood luck!')%(expectedUrwidVersion, urwid.__version__)
     sleep(1)
 
-database = {'fruit':'apples\noranges\npears\npeaches\raspberries\strawberries',
-            'animals':'pythons\nbears\njellyfish\ndolphins\nelephants',
-            'Sustainable Means of Transportation':'bicycling\n\
-            \nwalking\n\
-            taking the train',
-            "A few of Drew's favorite things":'python programming language\n\
-            bicycling\nstrawberries\nnotational velocity\n'}
+import backend
+
+# For now, just work with a toy dictionary.
+db = backend.Database(backend.toyDict)
 
 palette = [('search', 'white', 'black', '', 'black', 'g62'),
     ('list focus', 'black', 'light gray', '', 'black', 'g78'),
