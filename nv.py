@@ -74,7 +74,7 @@ class NV_Pile(urwid.Pile):
     def mouse_event(self, size, event, button, col, row, focus):
         # Intercept clicks the search widget to keep focus on the list widget.
         if row==0:
-            searchWidget.set_cursor_position(col)
+            searchWidget.set_edit_position(col)
             if self.get_focus() == self.widget_list[2]:
                 self.set_focus(1)
         else:
