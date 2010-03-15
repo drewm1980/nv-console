@@ -101,7 +101,7 @@ def on_search_update(sourceWidget, searchString):
         previouslySelectedKey = focusWidget.original_widget.text
     
     # The top Edit box search string has changed.
-    listStrings = db.search(searchString)
+    listStrings = db.search(searchString)  # Should be mixed case.
     listEntries = []
     for s in listStrings:
         listEntries.append(urwid.AttrMap(SelectableText(s),
@@ -114,11 +114,19 @@ def on_search_update(sourceWidget, searchString):
     # Keep list focus stable, and update body edit window if necessary    
     if previouslySelectedKey in listStrings:
         listWidget.set_focus(listStrings.index(previouslySelectedKey))
-    else:
+    elif len(listStrings)>0:
         listWidget.set_focus(0)
-        editWidget.set_edit_text(db.get_body_from_title(listStrings[0]))    
-
+        editWidget.set_edit_text(db.get_body_from_title(listStrings[0]))
 urwid.connect_signal(searchWidget, 'change', on_search_update)
+
+def on_list_focus_change():
+    (focusWidget, focusPosition) = listWidget.get_focus()
+    if focusWidget==None:
+        editWidget.set_edit_text('')
+    else:
+        newSelectedKey = focusWidget.original_widget.text
+        editWidget.set_edit_text(db.get_body_from_title(newSelectedKey))
+urwid.connect_signal(listWidget, 'modified', on_list_focus_change)
 
 def on_unhandled_input(input=None):
     warn('Bug! Detected unhandled input:%s'%str(input))

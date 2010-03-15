@@ -7,22 +7,21 @@ class Database(object):
         searchString = searchString.lower()
         returnKeys = []
         for (key,val) in self.notes.iteritems():
-            key = key.lower()
-            val = val.lower()
-            if (key.find(searchString)>-1) or (val.find(searchString)>-1):
+            lowerKey = key.lower()
+            lowerVal = val.lower()
+            if (lowerKey.find(searchString)>-1) or (lowerVal.find(searchString)>-1):
                 returnKeys.append(key)
         return returnKeys
     def get_body_from_title(self,key):
         return self.notes[key]
 
-toyDict = {'fruit':'apples\noranges\npears\npeaches\raspberries\strawberries',
+toyDict = {'fruit':'apples\noranges\npears\npeaches\nraspberries\nstrawberries',
             'animals':'pythons\nbears\njellyfish\ndolphins\nelephants',
-            'Sustainable Means of Transportation':'bicycling\n\
-            \nwalking\n\
-            taking the train',
+            'Sustainable Means of Transportation':'bicycling\nwalking\n'+\
+            'taking the train',
             "A few of Drew's favorite things":'Stephanie Brabant\n'+\
-            'python programming language\n\
-            bicycling\nstrawberries\nnotational velocity\n'}
+            'python programming language\n'+\
+            'bicycling\nstrawberries\nnotational velocity\n'}
 
 def test_database_sanity():
     db = Database(toyDict)
