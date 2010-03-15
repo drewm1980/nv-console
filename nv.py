@@ -71,6 +71,14 @@ class NV_Pile(urwid.Pile):
                 return super(NV_Pile, self).keypress(size, key)
         else:
             raise StandardError,"Oops! Pile focus reached an unexpected widget!"
+    def mouse_event(self, size, event, button, col, row, focus):
+        # Intercept clicks the search widget to keep focus on the list widget.
+        if row==0:
+            searchWidget.set_cursor_position(col)
+            if self.get_focus() == self.widget_list[2]:
+                self.set_focus(1)
+        else:
+            super(NV_Pile, self).mouse_event(self, size, event, button, col, row, focus)
 
 # Add some formatting and padding widgets.
 temp1 = searchWidget
