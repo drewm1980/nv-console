@@ -110,9 +110,15 @@ def on_search_update(sourceWidget, searchString):
     # Treat the SimpleListWalker like a list...    
     del listWidget[:]
     listWidget.extend(listEntries)
-    
-urwid.connect_signal(searchWidget, 'change', on_search_update)
 
+    # Keep list focus stable, and update body edit window if necessary    
+    if previouslySelectedKey in listStrings:
+        listWidget.set_focus(listStrings.index(previouslySelectedKey))
+    else:
+        listWidget.set_focus(0)
+        editWidget.set_edit_text(db.get_body_from_title(listStrings[0]))    
+
+urwid.connect_signal(searchWidget, 'change', on_search_update)
 
 def on_unhandled_input(input=None):
     warn('Bug! Detected unhandled input:%s'%str(input))
