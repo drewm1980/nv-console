@@ -78,7 +78,7 @@ class NV_Pile(urwid.Pile):
             if self.get_focus() == self.widget_list[2]:
                 self.set_focus(1)
         else:
-            super(NV_Pile, self).mouse_event(self, size, event, button, col, row, focus)
+            super(NV_Pile, self).mouse_event(size, event, button, col, row, focus)
 
 # Add some formatting and padding widgets.
 temp1 = searchWidget
