@@ -65,7 +65,7 @@ class NV_Pile(urwid.Pile):
             else:
                 return self.widget_list[0].keypress((size[0],), key)
         elif self.get_focus() == self.widget_list[2]:
-            if key.lower() in ['shift tab']:
+            if key.lower() in ['shift tab', 'tab']:
                 self.set_focus(1)
             else:
                 return super(NV_Pile, self).keypress(size, key)
