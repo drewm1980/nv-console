@@ -35,7 +35,14 @@ class SelectableText(urwid.Text):
         return key
 
 # An Edit box for the filter
-searchWidget = urwid.Edit('', wrap='clip', multiline=False)
+class myEdit(urwid.Edit):
+    def __init__(self, *argl, **argd):
+        self.fakefocus = True
+        return super(myEdit, self).__init__(*argl, **argd)
+    def render(self, size, focus=False):
+        return super(myEdit, self).render(size, self.fakefocus)
+
+searchWidget = myEdit('', wrap='clip', multiline=False)
 
 # A list walker for the filtered entries...
 listStrings = db.search('')
@@ -53,6 +60,7 @@ editWidget = urwid.Edit('', wrap='space', multiline=True,
 class NV_Pile(urwid.Pile):
     def __init__(self, widget_list, focus_item=None):
         super(NV_Pile, self).__init__(widget_list, focus_item=1)
+
     def keypress(self, size, key):
         if key in ['ctrl q']:
             raise urwid.ExitMainLoop()
@@ -61,16 +69,19 @@ class NV_Pile(urwid.Pile):
                 self.set_focus(2)
             elif key.lower() in ['up','down','pageup','pagedown']:
                 key = self.widget_list[1].keypress(size, key)
-                return key
             else:
-                return self.widget_list[0].keypress((size[0],), key)
+                key = self.widget_list[0].keypress((size[0],), key)
         elif self.get_focus() == self.widget_list[2]:
             if key.lower() in ['shift tab', 'tab']:
                 self.set_focus(1)
+                searchWidget.fakefocus = True
             else:
-                return super(NV_Pile, self).keypress(size, key)
+                key = super(NV_Pile, self).keypress(size, key)
         else:
             raise StandardError,"Oops! Pile focus reached an unexpected widget!"
+        # Make sure the search widget fakefocus is still correct.
+        searchWidget.fakefocus = self.get_focus()==self.widget_list[1]
+    
     def mouse_event(self, size, event, button, col, row, focus):
         # Intercept clicks the search widget to keep focus on the list widget.
         if row==0:
@@ -79,6 +90,8 @@ class NV_Pile(urwid.Pile):
                 self.set_focus(1)
         else:
             super(NV_Pile, self).mouse_event(size, event, button, col, row, focus)
+        # Make sure the search widget fakefocus is still correct.
+        searchWidget.fakefocus = self.get_focus()==self.widget_list[1]
 
 # Add some formatting and padding widgets.
 temp1 = searchWidget
@@ -99,7 +112,7 @@ pile = NV_Pile([('flow', temp1),
     ('weight',2,temp3)])
 
 def on_search_update(sourceWidget, searchString):
-    assert type(sourceWidget)==urwid.Edit, 'I was expecting an urwid.Edit!'
+    assert type(sourceWidget)==myEdit, 'I was expecting a myEdit widget!'
     assert type(listWidget)==urwid.SimpleListWalker, "listWidget is not the "+\
                                                     "expected type!!"
     (focusWidget, focusPosition) = listWidget.get_focus()
