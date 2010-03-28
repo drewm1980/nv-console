@@ -18,14 +18,17 @@ if urwid.__version__!=expectedUrwidVersion:
          'found.\nGood luck!')%(expectedUrwidVersion, urwid.__version__)
     sleep(1)
 
+import os
+insideAppleTerminal = os.getenv('TERM_PROGRAM') == 'Apple_Terminal'
+
 import backend
 
 # For now, just work with a toy dictionary.
 db = backend.Database(backend.toyDict)
 
 palette = [('search', 'white', 'black', '', 'black', 'g62'),
-    ('list focus', 'black', 'light gray', '', 'black', 'g78'),
-    ('list nofocus', 'black', 'dark gray', '', 'black', 'g70'),
+    ('list focus', 'white', 'dark gray', '', 'black', 'g78'),
+    ('list nofocus', 'black', 'light gray', '', 'black', 'g70'),
     ('edit', 'black', 'white')]
 
 # We will need text entries that are selectable later.
@@ -140,6 +143,11 @@ def on_unhandled_input(input=None):
     warn('Bug! Detected unhandled input:%s'%str(input))
 
 loop = urwid.MainLoop(pile, palette, unhandled_input=on_unhandled_input)
-loop.screen.set_terminal_properties(colors=256)
+
+if insideAppleTerminal:
+    loop.screen.set_terminal_properties()
+else:
+    loop.screen.set_terminal_properties(colors=256)
+
 loop.run()
 
