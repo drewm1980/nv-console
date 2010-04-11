@@ -1,12 +1,20 @@
 #!/usr/bin/python
-# This is an urwid port of the Notational Velocity note taking program.
-# Andrew Wagner 2010
+#
+#    Copyright (C) 2010 Andrew Wagner
+#   (insert GPL here...)
+#
+# This is a minimalist note-taking program.
+#
+# WARNING: THIS IS CURRENTLY NON FUNCTIONAL ALPHA SOFTWARE!!!
+#
+# Andrew Wagner 2010 (drewm1980@gmail.com)
+#
 from warnings import warn
 from time import sleep
 try:
     import urwid
 except ImportError:
-    raise ImportError, "Oops, Notational Velociy could not find the urwid"+\
+    raise ImportError, "Oops, could not find the urwid"+\
                         "library!  On Debian, try something like:"+\
                         "# apt-get install urwid"
 expectedUrwidVersion = '0.9.9.1'
