@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+#
+#    Copyright (C) 2010 Andrew Wagner
+#   insert GPL here...
 class Database(object):
     def __init__(self, initialDict={}):
         self.notes = initialDict
@@ -21,7 +23,7 @@ toyDict = {'fruit':'apples\noranges\npears\npeaches\nraspberries\nstrawberries',
             'taking the train',
             "A few of Drew's favorite things":'Stephanie Brabant\n'+\
             'python programming language\n'+\
-            'bicycling\nstrawberries\nnotational velocity\n'}
+            'bicycling\nstrawberries\n'}
 
 def test_database_sanity():
     db = Database(toyDict)
