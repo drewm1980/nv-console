@@ -1,3 +1,7 @@
+WARNING: THIS SOFTWARE IS INCOMPLETE ALPHA SOFTWARE!!!
+IT PROBABLY WON'T DAMAGE YOUR COMPUTER, 
+BUT IT MIGHT BE A WASTE YOUR TIME IN ITS CURRENT STATE
+
 This is a minimalist note-taking program.  It will be VERY familiar to users of
 the Notational Velocity note taking program on os x.
 
@@ -8,8 +12,8 @@ type the name for a new note.
 3. A window where you can edit the selected note
 
 The program is always in one of two states, toggled with the Tab key:
-1. Searching/Creating notes
-2. Editing
+1. Searching/Creating/Selecting notes
+2. Editing the currently selected note
 
 Original version written by:
 Drew Wagner (drewm1980@gmail.com)
