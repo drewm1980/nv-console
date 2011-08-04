@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-#    Copyright (C) 2010 Andrew Wagner
+#    Copyright (C) 2011 Andrew Wagner
 #   (insert GPL here...)
 #
 # This is a minimalist note-taking program.
@@ -15,8 +15,8 @@ try:
     import urwid
 except ImportError:
     raise ImportError, "Oops, could not find the urwid"+\
-                        "library!  On Debian, try something like:"+\
-                        "# apt-get install urwid"
+                        "library!  On Debian, try:"+\
+                        "# apt-get install python-urwid"
 expectedUrwidVersion = '0.9.9.1'
 assert urwid.__version__ >= '0.9.9', 'Sorry, you need a newer version of '+\
                             'urwid. Please update.  If you''re on Debian, '+\
