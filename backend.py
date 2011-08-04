@@ -1,10 +1,46 @@
 #!/usr/bin/env python
 #
-#    Copyright (C) 2010 Andrew Wagner
+#    Copyright (C) 2011 Andrew Wagner
 #   insert GPL here...
+
+import os
+from hashlib import md5
+from config import *
+
 class Database(object):
-    def __init__(self, initialDict={}):
-        self.notes = initialDict
+    def __init__(self, 
+                 location='~/notes', 
+                 encryptedLocation='~/.notes',
+                 encryption='encfs'):
+        encryptedLocation = os.path.expanduser(encryptedLocation)
+        location = os.path.expanduser(location)
+        self.notes = {}
+        self.location = location;
+        self.encryptedLocation=encryptedLocation
+        self.encryption=encryption
+    def load(self):
+        if encryption == 'encfs':
+            os.system('encfs ' + self.encryptedLocation 
+                      + ' ' + self.location)
+        self.filenames = os.listdir(self.location)
+        for x in filenames:
+            noteContents = open(os.path.join(self.location, x)).readlines()
+            noteDescription = noteContents[0]
+            try:
+                noteBody = noteContents[1:]
+            except IndexError:
+                noteBody = ''
+            self.notes[noteDescription] = noteBody
+    def store_brutally(self):
+        # Blow away everything that is already in the stored database
+        for root, dirs, files in os.walk(self.location):
+            for f in files:
+                fullpath = os.path.join(root, f)
+                os.remove(fullpath)
+        for (noteDescription, noteBody) in self.notes.iteritems():
+            filename = md5.new(noteDescription).hexdigest()
+            fileContents = '\n'.join([noteDescription, noteBody])
+            open(os.path.join(location, filename)).write(fileContents)
     def search(self, searchString):
         searchString = searchString.lower()
         returnKeys = []
@@ -17,21 +53,3 @@ class Database(object):
     def get_body_from_title(self,key):
         return self.notes[key]
 
-toyDict = {'fruit':'apples\noranges\npears\npeaches\nraspberries\nstrawberries',
-            'animals':'pythons\nbears\njellyfish\ndolphins\nelephants',
-            'Sustainable Means of Transportation':'bicycling\nwalking\n'+\
-            'taking the train',
-            "A few of Drew's favorite things":'Stephanie Brabant\n'+\
-            'python programming language\n'+\
-            'bicycling\nstrawberries\n'}
-
-def test_database_sanity():
-    db = Database(toyDict)
-    hits = db.search('oran')
-    assert hits==['fruit']
-    body = db.get_body_from_title(hits[0])
-    assert body == 'apples\noranges\npears\npeaches\raspberries\strawberries'
-    print 'Database Sanity Test Passed!'
-
-if __name__=='__main__':
-    test_database_sanity()

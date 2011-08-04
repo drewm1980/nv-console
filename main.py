@@ -29,10 +29,14 @@ if urwid.__version__!=expectedUrwidVersion:
 import os
 insideAppleTerminal = os.getenv('TERM_PROGRAM') == 'Apple_Terminal'
 
+import config
 import backend
 
-# For now, just work with a toy dictionary.
-db = backend.Database(backend.toyDict)
+#db = backend.Database(backend.toyDict)
+db = backend.Database()
+db.decrypt()
+db.load()
+
 
 palette = [('search', 'white', 'black', '', 'black', 'g62'),
     ('list focus', 'white', 'dark gray', '', 'black', 'g78'),
