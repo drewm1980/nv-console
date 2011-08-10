@@ -3,6 +3,7 @@
 
 import os
 from nose.tools import *
+from backend import *
 
 toyDict = {'fruit':'apples\noranges\npears\npeaches\nraspberries\nstrawberries',
             'animals':'pythons\nbears\njellyfish\ndolphins\nelephants',
@@ -14,11 +15,16 @@ toyDict = {'fruit':'apples\noranges\npears\npeaches\nraspberries\nstrawberries',
 
 def setup_func():
     import os
-    os.system('rm -rf test')
-    os.makedirs('test')
-
-    from backend import *
     global db
+    try:
+        os.makedirs('test/.notes')
+    except:
+        pass
+    try:
+        os.makedirs('test/notes')
+    except:
+        pass
+    #os.system('fusermount -u ' + os.path.abspath('test/notes'))
     db = Database(location='test/notes',
                   encryptedLocation='test/.notes')
 

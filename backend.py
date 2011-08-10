@@ -14,16 +14,18 @@ class Database(object):
                  encryption='encfs'):
         encryptedLocation = os.path.expanduser(encryptedLocation)
         location = os.path.expanduser(location)
+        encryptedLocation = os.path.abspath(encryptedLocation)
+        location = os.path.abspath(location)
         self.notes = {}
         self.location = location;
         self.encryptedLocation=encryptedLocation
         self.encryption=encryption
     def load(self):
         if encryption == 'encfs':
-            os.system('encfs ' + self.encryptedLocation 
+            os.system('encfs --standard' + self.encryptedLocation 
                       + ' ' + self.location)
         self.filenames = os.listdir(self.location)
-        for x in filenames:
+        for x in self.filenames:
             noteContents = open(os.path.join(self.location, x)).readlines()
             noteDescription = noteContents[0]
             try:
@@ -32,11 +34,8 @@ class Database(object):
                 noteBody = ''
             self.notes[noteDescription] = noteBody
     def store_brutally(self):
-        # Blow away everything that is already in the stored database
-        for root, dirs, files in os.walk(self.location):
-            for f in files:
-                fullpath = os.path.join(root, f)
-                os.remove(fullpath)
+        # Blow away all stored notes and write all im-memory notes
+        rmcontents(self.location)
         for (noteDescription, noteBody) in self.notes.iteritems():
             filename = md5.new(noteDescription).hexdigest()
             fileContents = '\n'.join([noteDescription, noteBody])
